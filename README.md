@@ -80,6 +80,20 @@ To contribute to the development of Sanity Translate Service, you can:
 - Commit your changes.
 - Submit a pull request.
 
+## Compatibility and Considerations
+
+### Sanity V3 and Internationalization
+
+SanityTranslator is designed to operate seamlessly with Sanity V3 and is fully compatible with the latest version of the Sanity.io Internationalization Plugin. This ensures that the tool leverages the most up-to-date features for content translation and internationalization offered by Sanity.
+
+### Document Overwrite Warning
+
+Please be aware that using SanityTranslator to translate a document will overwrite any previously created document with the same identifier. Exercise caution and ensure that you have appropriate backups or versioning in place before you translate and overwrite existing content.
+
+### Testing
+
+Currently, SanityTranslator lacks a suite of automated tests. As such, it is recommended that users manually verify the tool’s functionality in a controlled environment before deploying it in a production setting. Contributions to develop a comprehensive testing suite are welcome and encouraged.
+
 
 ## License
 
