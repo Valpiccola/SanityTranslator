@@ -57,7 +57,14 @@ For example:
     "InputElements": [
         "title",
         "subtitle",
-        "intro"
+        "intro",
+        "metadata.metaKeyword",
+        "metadata.metaDescription",
+        "metadata.metaTitle",
+        "text.000.title",
+        "text.000.intro ",
+        "text.000.text",
+        "text.000.children.000.text",
     ]
 }
 ```
