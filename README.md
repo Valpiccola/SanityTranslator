@@ -48,7 +48,6 @@ go build
 Send a POST request to the /sanity_translate_document endpoint with the JSON payload specifying the document slugs and the target language. 
 For example:
 
-
 ```json
 {
     "FromSlug": "/it/this-is-the-slug-from",
@@ -67,6 +66,28 @@ For example:
         "text.000.children.000.text",
     ]
 }
+```
+
+Here how a working CURL request look like:
+
+```bash
+curl --location 'localhost:8080/sanity_translate_document' \
+--header 'Content-Type: application/json' \
+--data '{
+    "FromSlug": "/it",
+    "ToSlug": "/de",
+    "Lang": "de",
+    "InputElements": [
+        "title",
+        "intro",
+        "metadata.metaKeyword",
+        "metadata.metaDescription",
+        "metadata.metaTitle",
+        "text.000.title",
+        "text.000.intro ",
+        "text.000.children.000.text"
+    ]
+}'
 ```
 
 The service will fetch the specified document from Sanity, translate the designated elements, and create a new translated document in the target language.
@@ -93,7 +114,6 @@ Please be aware that using SanityTranslator to translate a document will overwri
 ### Testing
 
 Currently, SanityTranslator lacks a suite of automated tests. As such, it is recommended that users manually verify the tool’s functionality in a controlled environment before deploying it in a production setting. Contributions to develop a comprehensive testing suite are welcome and encouraged.
-
 
 ## License
 
