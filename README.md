@@ -111,9 +111,66 @@ SanityTranslator is designed to operate seamlessly with Sanity V3 and is fully c
 
 Please be aware that using SanityTranslator to translate a document will overwrite any previously created document with the same identifier. Exercise caution and ensure that you have appropriate backups or versioning in place before you translate and overwrite existing content.
 
-### Testing
+## Testing
 
-Currently, SanityTranslator lacks a suite of automated tests. As such, it is recommended that users manually verify the tool’s functionality in a controlled environment before deploying it in a production setting. Contributions to develop a comprehensive testing suite are welcome and encouraged.
+To properly test the Sanity Translate Service, you need to have a test document set up in your Sanity.io project. The document should conform to a specific schema expected by the tool. Here is an example of a document schema named `test` that is necessary for the testing process:
+
+```javascript
+import { RobotIcon } from '@sanity/icons'
+
+export default {
+  name: 'test',
+  type: 'document',
+  title: 'Test',
+  icon: RobotIcon,
+  preview: {
+    select: {
+      slug: 'slug'
+    },
+    prepare(selection) {
+      const {slug} = selection
+      return {
+        title: slug["current"]
+      }
+    }
+  },
+  fields: [
+    {
+      name: 'slug',
+      type: 'slug',
+      title: 'Slug'
+    },
+    {
+      name: 'title',
+      type: 'string',
+      title: 'Title'
+    },
+    {
+      name: 'intro',
+      type: 'string',
+      title: 'Intro'
+    },
+    {
+      title: 'Test Array', 
+      name: 'testArray',
+      type: 'array', 
+      of: [
+        {type: 'string'}
+      ]
+    },
+    {
+      title: 'Portable Test', 
+      name: 'portableTest',
+      type: 'array',
+      of: [
+        {type: 'block'},
+      ]
+    }
+  ]
+}
+```
+
+Ensure you have created a document within your Sanity.io project using this schema before running tests. The document should contain at least the slug, title, and intro fields populated with data, as the translation service will attempt to access and modify these fields.
 
 ## License
 
