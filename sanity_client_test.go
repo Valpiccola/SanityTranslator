@@ -23,8 +23,8 @@ func TestRunQuery(t *testing.T) {
 	}{
 		{
 			name:      "ValidQueryForTitle",
-			query:     "*[slug.current == '/en/page']{title}",
-			wantTitle: "THIS WILL NOT BE TRANSLATED",
+			query:     "*[slug.current == '/en/page/do-not-delete']{title}",
+			wantTitle: "This is a test title",
 		},
 		{
 			name:      "EmptyResponse",
@@ -68,7 +68,7 @@ func TestRunMutation(t *testing.T) {
 	}{
 		{
 			name:       "ValidMutationForIntro",
-			documentID: "02f58e84-14f9-410d-a072-9e9aa5f58bbf__i18n_en",
+			documentID: "1dc603f0-0012-4a1d-90e5-575b367804da",
 		},
 	}
 

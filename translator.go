@@ -39,6 +39,7 @@ func SanityTranslateDocument(c *gin.Context) {
 		return
 	}
 	result := gjson.Get(txx.Before, "result").Raw
+	txx.Id = gjson.Get(result, "_id").String()
 	txx.Before = result
 	txx.After = result
 
@@ -72,7 +73,7 @@ func SanityTranslateDocument(c *gin.Context) {
 		{
 			"mutations": [
 				{
-					"create": %s
+					"createOrReplace": %s
 				}
 			]
 		}`,
@@ -99,7 +100,7 @@ func EvolveSanityResponse(txx *SanityTranslator) (err error) {
 
 	// Set id
 	old_id := gjson.Get(txx.Before, "_id").Str
-	new_id := old_id + fmt.Sprintf(`_%s`, txx.Lang)
+	new_id := old_id + fmt.Sprintf(`_%s`, txx.ToLang)
 	txx.After, err = sjson.Set(
 		txx.After,
 		"_id",
@@ -117,7 +118,7 @@ func EvolveSanityResponse(txx *SanityTranslator) (err error) {
 	txx.After, err = sjson.Set(
 		txx.After,
 		"language",
-		txx.Lang,
+		txx.ToLang,
 	)
 
 	return err
@@ -155,7 +156,11 @@ func ExecuteTranslation(txx *SanityTranslator, val interface{}, path string) err
 				if fmt.Sprintf("%v", v) == "" {
 					continue
 				}
-				trax, err := RunDeepl(fmt.Sprintf("%v", v), txx.Lang)
+				trax, err := RunDeepl(
+					fmt.Sprintf("%v", v),
+					txx.FromLang,
+					txx.ToLang,
+				)
 				if err != nil {
 					fmt.Println("Error while translating path")
 					return err
@@ -175,8 +180,7 @@ func ExecuteTranslation(txx *SanityTranslator, val interface{}, path string) err
 }
 
 // ManageTranslationMetadata updates the translation metadata document to keep reference in sync
-func ManageTranslationMetadata(txx *SanityTranslator) (err error) {
-
+func ManageTranslationMetadata(txx *SanityTranslator) error {
 	query := fmt.Sprintf(`*[slug.current == '%s']{
 		"translation": *[
 			_type == "translation.metadata" &&
@@ -190,102 +194,99 @@ func ManageTranslationMetadata(txx *SanityTranslator) (err error) {
 		return err
 	}
 
-	// If the document is empty it means no tranlsation.metadata document exists
-	if gjson.Get(document, "result.0.translation").String() == "[]" {
-		fmt.Println("Managing an empty translation.metadata document")
+	languages := gjson.Get(document, "result.#.translation.#.translations.#._key")
 
-		rawMutation := fmt.Sprintf(`
-	 	{
-	 		"mutations": [
-	 			{
-	 				"create": {
-	 					"_type": "translation.metadata",
-	 					"translations": [
-	 						{
-	 							"_key": "it",
-	 							"value": {
-	 								"_ref": "%s",
-	 								"_type": "reference"
-	 							}
-	 						},
-	 						{
-	 							"_key": "%s",
-	 							"value": {
-	 								"_ref": "%s",
-	 								"_type": "reference"
-	 							}
-	 						}
-	 					]
-	 				}
-	 			}
-	 		]
-	 	}`,
-			gjson.Get(txx.Before, "_id").String(),
-			txx.Lang,
-			gjson.Get(txx.After, "_id").String(),
-		)
-
-		err = RunMutation(rawMutation)
-		if err != nil {
-			fmt.Println("Error running mutation")
-			return err
-		}
-	} else { // If the document is not empty it means a tranlsation.metadata document exists
-
-		languages := gjson.Get(document, "result.#.translation.#.translations.#._key")
-
-		need_to_create := true
-		for _, firstLevel := range languages.Array() {
-			for _, secondLevel := range firstLevel.Array() {
-				for _, lang := range secondLevel.Array() {
-					if lang.Str == txx.Lang {
-						need_to_create = false
-					}
-				}
-			}
-		}
-
-		if need_to_create {
-
-			fmt.Println("Managing a non-empty translation.metadata document")
-
-			rawPatch := fmt.Sprintf(`
-		 		{
-		 			"mutations": [
-		 				{
-		 					"patch": {
-		 						"id": "%s",
-		 						"insert": {
-		 							"after": "translations[-1]",
-		 							"items": [
-		 								{
-											"_key": "%s",
-											"value": {
-												"_ref": "%s",
-												"_type": "reference"
-											}
-										}
-		 							]
-		 						}
-		 					}
-		 				}
-		 			]
-		 		}`,
-				gjson.Get(document, "result.0.translation.0._id").String(),
-				txx.Lang,
-				gjson.Get(txx.After, "_id").String(),
-			)
-
-			RunMutation(rawPatch)
-			if err != nil {
-				fmt.Println("ERROR PATCHING: %w", err)
-			}
-
+	isEmpty := true
+	for _, innerSlice := range languages.Array() {
+		if len(innerSlice.Array()) != 0 {
+			isEmpty = false
+			break
 		}
 	}
 
-	return err
+	if isEmpty {
 
+		// fmt.Println("Creating new translation.metadata document")
+
+		rawMutation := fmt.Sprintf(`
+			{
+				"mutations": [
+					{
+						"create": {
+							"_type": "translation.metadata",
+							"_id": "%s",
+							"translations": [
+								{
+									"_key": "%s",
+									"value": {
+										"_ref": "%s",
+										"_type": "reference"
+									}
+								},
+								{
+									"_key": "%s",
+									"value": {
+										"_ref": "%s",
+										"_type": "reference"
+									}
+								}
+							]
+						}
+					}
+				]
+			}`,
+			txx.Id+"_base",
+			txx.FromLang,
+			gjson.Get(txx.Before, "_id").String(),
+			txx.ToLang,
+			gjson.Get(txx.After, "_id").String(),
+		)
+		err = RunMutation(rawMutation)
+		if err != nil {
+			fmt.Printf("Error running mutation: %v\n", err)
+			return err
+		} else {
+			return nil
+		}
+
+	} else {
+
+		// fmt.Println("Updating existing translation.metadata document")
+
+		rawPatch := fmt.Sprintf(`
+			{
+				"mutations": [
+					{
+						"patch": {
+							"id": "%s",
+							"insert": {
+								"after": "translations[-1]",
+								"items": [
+									{
+										"_key": "%s",
+										"value": {
+											"_ref": "%s",
+											"_type": "reference"
+										}
+									}
+								]
+							}
+						}
+					}
+				]
+			}`,
+			txx.Id+"_base",
+			txx.ToLang,
+			gjson.Get(txx.After, "_id").String(),
+		)
+		err = RunMutation(rawPatch)
+		if err != nil {
+			fmt.Printf("Error running mutation: %v\n", err)
+			return err
+		}
+	}
+
+	return nil
 }
 
 // cleanString removes all non-alphabetic characters from the input string.

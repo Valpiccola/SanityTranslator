@@ -11,11 +11,11 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-func RunDeepl(text string, lang string) (string, error) {
+func RunDeepl(text string, from_lang string, to_lang string) (string, error) {
 	params := url.Values{}
 	params.Add("text", text)
-	params.Add("source_lang", "it")
-	params.Add("target_lang", lang)
+	params.Add("source_lang", from_lang)
+	params.Add("target_lang", to_lang)
 	params.Add("preserve_formatting", "1")
 	body := strings.NewReader(params.Encode())
 
@@ -25,6 +25,7 @@ func RunDeepl(text string, lang string) (string, error) {
 		body,
 	)
 	if err != nil {
+		fmt.Println("Error creating Deepl request")
 		return "", err
 	}
 	req.Header.Set(
@@ -38,11 +39,13 @@ func RunDeepl(text string, lang string) (string, error) {
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
+		fmt.Println("Error executing Deepl request")
 		return "", err
 	}
 	defer resp.Body.Close()
 	bodyText, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
+		fmt.Println("Error reading Deepl response")
 		return "", err
 	}
 	translated_text := gjson.Get(

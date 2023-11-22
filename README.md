@@ -50,9 +50,10 @@ For example:
 
 ```json
 {
+    "FromLang": "it",
     "FromSlug": "/it/this-is-the-slug-from",
+    "ToLang": "de",
     "ToSlug": "/de/this-is-the-slug-to",
-    "Lang": "de",
     "InputElements": [
         "title",
         "subtitle",
@@ -74,9 +75,10 @@ Here how a working CURL request look like:
 curl --location 'localhost:8080/sanity_translate_document' \
 --header 'Content-Type: application/json' \
 --data '{
-    "FromSlug": "/it",
-    "ToSlug": "/de",
-    "Lang": "de",
+    "FromLang": "it",
+    "FromSlug": "/it/this-is-the-slug-from",
+    "ToLang": "de",
+    "ToSlug": "/de/this-is-the-slug-to",
     "InputElements": [
         "title",
         "intro",
@@ -165,6 +167,12 @@ export default {
       of: [
         {type: 'block'},
       ]
+    },
+    {
+      name: 'language',
+      type: 'string',
+      readOnly: true,
+      hidden: true
     }
   ]
 }

@@ -11,8 +11,9 @@ type SanityClient struct {
 // SanityTranslator holds the translation rules for Sanity documents.
 type SanityTranslator struct {
 	Id            string
-	Lang          string        // Language to translate to
+	FromLang      string        // Language to translate from
 	FromSlug      string        // Slug of the document to translate
+	ToLang        string        // Language to translate to
 	ToSlug        string        // Slug of the translated document
 	InputElements []string      // Elements to translate (e.g. text.000.children.000.text)
 	Fields        []SanityField // Fields to translate (e.g. text.1.children.1.text)

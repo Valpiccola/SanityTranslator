@@ -15,20 +15,20 @@ const (
 func RunQuery(query string) (string, error) {
 	response, err := HTTPRequest("GET", "query", query)
 	if err != nil {
-		fmt.Println("Error querying document:", err)
+		fmt.Println("Error querying document:", query)
 		return "", err
 	}
-	fmt.Println("Successfully queried document")
+	// fmt.Println("Successfully queried document")
 	return response, nil
 }
 
 func RunMutation(mutationData string) error {
 	_, err := HTTPRequest("POST", "mutate", mutationData)
 	if err != nil {
-		fmt.Println("Error mutating document:", err)
+		fmt.Println("Error mutating document:", mutationData)
 		return err
 	}
-	fmt.Println("Successfully mutated document")
+	// fmt.Println("Successfully mutated document")
 	return nil
 }
 
