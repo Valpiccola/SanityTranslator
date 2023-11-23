@@ -173,6 +173,8 @@ export default {
 
 Ensure you have created a document within your Sanity.io project using this schema before running tests. The document should contain at least the slug, title, and intro fields populated with data, as the translation service will attempt to access and modify these fields.
 
+These tests have been developed to work within my Sanity Studio, so in case you want to run them, or you modify the tests according with your document ids, or you suggest a way to abstract the test logic through a proper pull request.
+
 ## Development
 
 To contribute to the development of Sanity Translate Service, you can:
