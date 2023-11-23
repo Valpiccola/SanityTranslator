@@ -11,6 +11,18 @@ Sanity Translate Service is a robust document translation tool designed to integ
 - Translation Memory: Maintains a translation metadata document within Sanity to keep track of translations.
 - API Endpoint: Exposes a POST endpoint for translating documents via HTTP requests.
 
+
+## Compatibility and Considerations
+
+### Sanity V3 and Internationalization
+
+SanityTranslator is designed to operate seamlessly with Sanity V3 and is fully compatible with the latest version of the Sanity.io Internationalization Plugin. This ensures that the tool leverages the most up-to-date features for content translation and internationalization offered by Sanity.
+
+### Document Overwrite Warning
+
+Please be aware that using SanityTranslator to translate a document will overwrite any previously created document with the same identifier. Exercise caution and ensure that you have appropriate backups or versioning in place before you translate and overwrite existing content.
+
+
 ## Getting Started
 
 ### Prerequisites
@@ -94,25 +106,6 @@ curl --location 'localhost:8080/sanity_translate_document' \
 
 The service will fetch the specified document from Sanity, translate the designated elements, and create a new translated document in the target language.
 
-## Development
-
-To contribute to the development of Sanity Translate Service, you can:
-
-- Fork the repository.
-- Create a new feature branch.
-- Commit your changes.
-- Submit a pull request.
-
-## Compatibility and Considerations
-
-### Sanity V3 and Internationalization
-
-SanityTranslator is designed to operate seamlessly with Sanity V3 and is fully compatible with the latest version of the Sanity.io Internationalization Plugin. This ensures that the tool leverages the most up-to-date features for content translation and internationalization offered by Sanity.
-
-### Document Overwrite Warning
-
-Please be aware that using SanityTranslator to translate a document will overwrite any previously created document with the same identifier. Exercise caution and ensure that you have appropriate backups or versioning in place before you translate and overwrite existing content.
-
 ## Testing
 
 To properly test the Sanity Translate Service, you need to have a test document set up in your Sanity.io project. The document should conform to a specific schema expected by the tool. Here is an example of a document schema named `test` that is necessary for the testing process:
@@ -179,6 +172,15 @@ export default {
 ```
 
 Ensure you have created a document within your Sanity.io project using this schema before running tests. The document should contain at least the slug, title, and intro fields populated with data, as the translation service will attempt to access and modify these fields.
+
+## Development
+
+To contribute to the development of Sanity Translate Service, you can:
+
+- Fork the repository.
+- Create a new feature branch.
+- Commit your changes.
+- Submit a pull request.
 
 ## License
 
