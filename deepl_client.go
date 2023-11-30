@@ -38,16 +38,15 @@ func RunDeepl(text string, from_lang string, to_lang string) (string, error) {
 	)
 
 	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		fmt.Println("Error executing Deepl request")
-		return "", err
-	}
 	defer resp.Body.Close()
 	bodyText, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		fmt.Println("Error reading Deepl response")
-		return "", err
+	if err != nil || resp.StatusCode != 200 {
+		fmt.Println("Error executing Deepl request")
+		fmt.Println("Status", resp.Status)
+		fmt.Println("Body", string(bodyText))
+		os.Exit(1)
 	}
+
 	translated_text := gjson.Get(
 		string(bodyText),
 		"translations.0.text",

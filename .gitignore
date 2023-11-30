@@ -1,5 +1,5 @@
 .env
-set_env_variables.sh
+set_env_variables*
 SanityTranslator
 main
 deepl
