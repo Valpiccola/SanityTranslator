@@ -8,10 +8,6 @@ import (
 	"net/url"
 )
 
-const (
-	baseAPIURL = "https://%s.api.sanity.io/%s/data"
-)
-
 func RunQuery(query string) (string, error) {
 	response, err := HTTPRequest("GET", "query", query)
 	if err != nil {
@@ -34,7 +30,12 @@ func RunMutation(mutationData string) error {
 
 // HTTPRequest performs a generic HTTP request and returns the response body as a string.
 func HTTPRequest(method, path, data string) (string, error) {
-	fullURL := fmt.Sprintf(baseAPIURL+"/%s/production", ProjectID, Version, path)
+	fullURL := fmt.Sprintf(
+		BaseAPIURL+"/%s/production",
+		ProjectID,
+		Version,
+		path,
+	)
 
 	var req *http.Request
 	var err error

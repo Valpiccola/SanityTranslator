@@ -21,7 +21,7 @@ func RunDeepl(text string, from_lang string, to_lang string) (string, error) {
 
 	req, err := http.NewRequest(
 		"POST",
-		deeplAPIURL,
+		DeeplAPIURL,
 		body,
 	)
 	if err != nil {

@@ -13,9 +13,6 @@ import (
 	"github.com/tidwall/sjson"
 )
 
-// DEEPL_API_URL defines the URL for the Deepl API used for translation.
-const deeplAPIURL = "https://api-free.deepl.com/v2/translate"
-
 // SanityTranslateDocument handles the main logic for translating Sanity documents.
 func SanityTranslateDocument(c *gin.Context) {
 

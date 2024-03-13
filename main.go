@@ -9,9 +9,11 @@ import (
 )
 
 var (
-	ProjectID = os.Getenv("SANITY_PROJECT_ID")
-	Version   = os.Getenv("SANITY_VERSION")
-	Token     = os.Getenv("SANITY_TOKEN")
+	ProjectID   = os.Getenv("SANITY_PROJECT_ID")
+	Version     = os.Getenv("SANITY_VERSION")
+	Token       = os.Getenv("SANITY_TOKEN")
+	DeeplAPIURL = "https://api-free.deepl.com/v2/translate"
+	BaseAPIURL  = "https://%s.api.sanity.io/%s/data"
 )
 
 func main() {
