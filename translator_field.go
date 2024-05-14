@@ -37,6 +37,8 @@ func SanityTranslateField(c *gin.Context) {
 
 	for _, mappingField := range txx.MappingFields {
 
+		fmt.Println("Starting translation for field: ", mappingField.JsonPath)
+
 		fieldValue := gjson.Get(txx.Before, mappingField.JsonPath).String()
 		if fieldValue == "" {
 			c.String(http.StatusBadRequest, "Field not found in the document")
@@ -45,6 +47,9 @@ func SanityTranslateField(c *gin.Context) {
 		}
 
 		for _, toSlug := range txx.ToSlugs {
+
+			fmt.Println("     Translating to: ", toSlug)
+
 			query = fmt.Sprintf(`*[slug.current == '%s'][0]`, toSlug)
 			translatedDoc, err := RunQuery(query)
 			if err != nil {
