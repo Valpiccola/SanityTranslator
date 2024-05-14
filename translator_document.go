@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"regexp"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -16,7 +15,7 @@ import (
 // SanityTranslateDocument handles the main logic for translating Sanity documents.
 func SanityTranslateDocument(c *gin.Context) {
 
-	var txx SanityTranslator
+	var txx SanityDocumentTranslator
 
 	err := errors.New("")
 
@@ -93,7 +92,7 @@ func SanityTranslateDocument(c *gin.Context) {
 }
 
 // EvolveSanityResponse updates the response with new info necessary to Sanity
-func EvolveSanityResponse(txx *SanityTranslator) (err error) {
+func EvolveSanityResponse(txx *SanityDocumentTranslator) (err error) {
 
 	// Set id
 	old_id := gjson.Get(txx.Before, "_id").Str
@@ -122,7 +121,7 @@ func EvolveSanityResponse(txx *SanityTranslator) (err error) {
 }
 
 // ExecuteTranslation executes the translation for the given path using Deepl API
-func ExecuteTranslation(txx *SanityTranslator, val interface{}, path string) error {
+func ExecuteTranslation(txx *SanityDocumentTranslator, val interface{}, path string) error {
 	switch v := val.(type) {
 	case map[string]interface{}:
 		for key, subVal := range v {
@@ -177,7 +176,7 @@ func ExecuteTranslation(txx *SanityTranslator, val interface{}, path string) err
 }
 
 // ManageTranslationMetadata updates the translation metadata document to keep reference in sync
-func ManageTranslationMetadata(txx *SanityTranslator) error {
+func ManageTranslationMetadata(txx *SanityDocumentTranslator) error {
 	query := fmt.Sprintf(`*[slug.current == '%s']{
 		"translation": *[
 			_type == "translation.metadata" &&
@@ -284,9 +283,4 @@ func ManageTranslationMetadata(txx *SanityTranslator) error {
 	}
 
 	return nil
-}
-
-// cleanString removes all non-alphabetic characters from the input string.
-func cleanString(text string) string {
-	return regexp.MustCompile(`[^a-zA-Z]+`).ReplaceAllString(text, "")
 }

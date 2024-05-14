@@ -9,7 +9,7 @@ type SanityClient struct {
 }
 
 // SanityTranslator holds the translation rules for Sanity documents.
-type SanityTranslator struct {
+type SanityDocumentTranslator struct {
 	Id            string
 	FromLang      string        // Language to translate from
 	FromSlug      string        // Slug of the document to translate
@@ -25,4 +25,18 @@ type SanityField struct {
 	Path              string
 	OriginalContent   string
 	TranslatedContent string
+}
+
+type SanityFieldTranslator struct {
+	Id            string
+	FromLang      string         // Language to translate from
+	FromSlug      string         // Slug of the document to translate
+	ToSlugs       []string       // Slugs of the translated documents
+	Before        string         // Document before any changes
+	MappingFields []MappingField // Mapping fields between JSON and Sanity
+}
+
+type MappingField struct {
+	JsonPath   string
+	SanityPath string
 }

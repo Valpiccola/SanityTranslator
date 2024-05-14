@@ -22,6 +22,7 @@ func main() {
 	router.Use(SetUpCORS())
 
 	router.POST("/sanity_translate_document", SanityTranslateDocument)
+	router.POST("/sanity_translate_field", SanityTranslateField)
 
 	router.Run(":8080")
 }
