@@ -55,7 +55,7 @@ go build
 ./SanityTranslator
 ```
 
-## Usage
+## Document Translation
 
 Send a POST request to the /sanity_translate_document endpoint with the JSON payload specifying the document slugs and the target language. 
 For example:
@@ -105,6 +105,77 @@ curl --location 'localhost:8080/sanity_translate_document' \
 ```
 
 The service will fetch the specified document from Sanity, translate the designated elements, and create a new translated document in the target language.
+
+## Field Translation
+
+This endpoint allows for targeted updates within documents, enhancing flexibility and efficiency.
+
+Send a POST request to the /sanity_translate_field endpoint with the JSON payload specifying the document slugs and the target language. 
+For example:
+
+```json
+{
+  "FromLang": "en",
+  "FromSlug": "/en/this-is-the-slug-from",
+  "ToSlugs": [
+    "/it/this-is-the-slug-to-1",
+    "/de/this-is-the-slug-to-2",
+    "/fr/this-is-the-slug-to-3"
+  ],
+  "MappingFields": [
+    {
+      "JsonPath": "text.0.intro",
+      "SanityPath": "text[0].intro"
+    },
+    {
+      "JsonPath": "text.1.intro",
+      "SanityPath": "text[1].intro"
+    },
+    {
+      "JsonPath": "text.2.intro",
+      "SanityPath": "text[2].intro"
+    },
+    {
+      "JsonPath": "text.3.intro",
+      "SanityPath": "text[3].intro"
+    }
+  ]
+}
+```
+
+Here how a working CURL request look like:
+
+```bash
+curl --location 'localhost:8080/sanity_translate_field' \
+--header 'Content-Type: application/json' \
+--data '{
+      "FromLang": "en",
+      "FromSlug": "/en/this-is-the-slug-from",
+      "ToSlugs": [
+        "/it/this-is-the-slug-to-1",
+        "/de/this-is-the-slug-to-2",
+        "/fr/this-is-the-slug-to-3"
+      ],
+      "MappingFields": [
+        {
+          "JsonPath": "text.0.intro",
+          "SanityPath": "text[0].intro"
+        },
+        {
+          "JsonPath": "text.1.intro",
+          "SanityPath": "text[1].intro"
+        },
+        {
+          "JsonPath": "text.2.intro",
+          "SanityPath": "text[2].intro"
+        },
+        {
+          "JsonPath": "text.3.intro",
+          "SanityPath": "text[3].intro"
+        }
+      ]
+    }'
+```
 
 ## Testing
 

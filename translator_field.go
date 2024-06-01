@@ -12,6 +12,8 @@ import (
 // SanityTranslateField handles the main logic for translating a specific field in Sanity documents.
 func SanityTranslateField(c *gin.Context) {
 
+	fmt.Println("Starting SanityTranslateField")
+
 	var txx SanityFieldTranslator
 
 	err := errors.New("")
