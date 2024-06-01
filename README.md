@@ -5,12 +5,11 @@ Sanity Translate Service is a robust document translation tool designed to integ
 ## Features
 
 - Document Translation: Translates documents from one language to another using DeepL API, while preserving formatting.
+- Field-Specific Translation: Offers the flexibility to translate individual fields within a document.
 - Sanity Integration: Directly interfaces with Sanity's data mutation and query APIs to fetch and update documents.
 - CORS Support: Configurable CORS policy for cross-origin resource sharing.
 - Input Flexibility: Supports translation of specified document elements or fields.
-- Translation Memory: Maintains a translation metadata document within Sanity to keep track of translations.
 - API Endpoint: Exposes a POST endpoint for translating documents via HTTP requests.
-
 
 ## Compatibility and Considerations
 
@@ -57,7 +56,7 @@ go build
 
 ## Document Translation
 
-Send a POST request to the /sanity_translate_document endpoint with the JSON payload specifying the document slugs and the target language. 
+Send a POST request to the `/sanity_translate_document` endpoint with the JSON payload specifying the document slugs and the target language. 
 For example:
 
 ```json
@@ -110,7 +109,7 @@ The service will fetch the specified document from Sanity, translate the designa
 
 This endpoint allows for targeted updates within documents, enhancing flexibility and efficiency.
 
-Send a POST request to the /sanity_translate_field endpoint with the JSON payload specifying the document slugs and the target language. 
+Send a POST request to the `/sanity_translate_field` endpoint with the JSON payload specifying the document slugs and the target language. 
 For example:
 
 ```json
@@ -258,3 +257,6 @@ To contribute to the development of Sanity Translate Service, you can:
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
+
+## TODO
+- Write tests for translator_field.go
