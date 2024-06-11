@@ -12,8 +12,6 @@ import (
 // SanityTranslateField handles the main logic for translating a specific field in Sanity documents.
 func SanityTranslateField(c *gin.Context) {
 
-	fmt.Println("Starting SanityTranslateField")
-
 	var txx SanityFieldTranslator
 
 	err := errors.New("")
@@ -39,7 +37,7 @@ func SanityTranslateField(c *gin.Context) {
 
 	for _, mappingField := range txx.MappingFields {
 
-		fmt.Println("Starting translation for field: ", mappingField.JsonPath)
+		fmt.Printf("Translating field: %s\n", mappingField.JsonPath)
 
 		fieldValue := gjson.Get(txx.Before, mappingField.JsonPath).String()
 		if fieldValue == "" {
@@ -49,8 +47,6 @@ func SanityTranslateField(c *gin.Context) {
 		}
 
 		for _, toSlug := range txx.ToSlugs {
-
-			fmt.Println("     Translating to: ", toSlug)
 
 			query = fmt.Sprintf(`*[slug.current == '%s'][0]`, toSlug)
 			translatedDoc, err := RunQuery(query)
@@ -91,10 +87,13 @@ func SanityTranslateField(c *gin.Context) {
 
 			err = RunMutation(rawPatch)
 			if err != nil {
-				c.String(http.StatusBadRequest, "Pushing new document to Sanity")
-				fmt.Println("Pushing new document to Sanity")
+				c.String(http.StatusBadRequest, "Failed patching translated field")
+				fmt.Println("Failed patching translated field")
 				return
 			}
+
+			fmt.Printf("\tTranslating field: %s\n", toSlug)
 		}
+		fmt.Println("")
 	}
 }

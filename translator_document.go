@@ -26,6 +26,8 @@ func SanityTranslateDocument(c *gin.Context) {
 		return
 	}
 
+	fmt.Printf("Translating from: %s\n", txx.FromSlug)
+
 	// Create a SanityDocument object adding all the info from Sanity API
 	query := fmt.Sprintf(`*[slug.current == '%s'][0]`, txx.FromSlug)
 	txx.Before, err = RunQuery(query)
@@ -89,6 +91,12 @@ func SanityTranslateDocument(c *gin.Context) {
 		fmt.Println("Failed managing translation metadata")
 		return
 	}
+
+	fmt.Printf("Translating to: %s\n\n", txx.ToSlug)
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Document translated successfully",
+	})
 }
 
 // EvolveSanityResponse updates the response with new info necessary to Sanity

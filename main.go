@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/gin-gonic/gin"
@@ -18,13 +19,19 @@ var (
 
 func main() {
 
+	gin.SetMode(gin.ReleaseMode)
+
 	router := gin.New()
 	router.Use(SetUpCORS())
 
 	router.POST("/sanity_translate_document", SanityTranslateDocument)
 	router.POST("/sanity_translate_field", SanityTranslateField)
 
+	fmt.Println("Starting Sanity Translation Service")
+	fmt.Println("")
+
 	router.Run(":8080")
+
 }
 
 func SetUpCORS() gin.HandlerFunc {
