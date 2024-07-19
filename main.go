@@ -28,6 +28,8 @@ func main() {
 		router.Use(corsConfig)
 	}
 
+	router.Use(printOriginDomain())
+
 	router.POST("/sanity_translate_document", SanityTranslateDocument)
 	router.POST("/sanity_translate_field", SanityTranslateField)
 
@@ -40,16 +42,14 @@ func main() {
 
 }
 
-func SetUpCORS() gin.HandlerFunc {
+func printOriginDomain() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.Writer.Header().Set(
-			"Access-Control-Allow-Origin",
-			"*",
-		)
-		c.Writer.Header().Set(
-			"Access-Control-Allow-Methods",
-			"POST, OPTIONS, GET",
-		)
+		origin := c.GetHeader("Origin")
+		if origin != "" {
+			fmt.Printf("Request from domain: %s\n", origin)
+		} else {
+			fmt.Println("No Origin header found in the request")
+		}
 		c.Next()
 	}
 }
