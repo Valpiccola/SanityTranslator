@@ -1,0 +1,45 @@
+name: Deploy Golang Translator
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Deploy to Server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          script: |
+            echo "------> Setting GOPATH..."
+            export GOPATH=$HOME/go
+            export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
+
+            echo "------> Changing to BackendTranslator directory..."
+            cd /root/BackendTranslator
+
+            echo "------> Setting environment variables..."
+            . ./set_env_variables.sh
+
+            echo "------> Pulling latest changes from Git..."
+            git pull origin main
+
+            echo "------> Building the application..."
+            go build
+
+            echo "------> Stopping BackendTranslator service..."
+            sudo systemctl stop BackendTranslator
+
+            echo "------> Starting BackendTranslator service..."
+            sudo systemctl start BackendTranslator
+
+            echo "------> Deployment complete."
