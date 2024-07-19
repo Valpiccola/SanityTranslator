@@ -36,14 +36,20 @@ func main() {
 	fmt.Println("Starting Sanity Translation Service")
 	fmt.Println("")
 
-	router.Run(":8080")
+	router.Run(":8001")
 
 }
 
 func SetUpCORS() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
-		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET")
+		c.Writer.Header().Set(
+			"Access-Control-Allow-Origin",
+			"*",
+		)
+		c.Writer.Header().Set(
+			"Access-Control-Allow-Methods",
+			"POST, OPTIONS, GET",
+		)
 		c.Next()
 	}
 }

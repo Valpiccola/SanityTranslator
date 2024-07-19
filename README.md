@@ -83,7 +83,7 @@ For example:
 Here how a working CURL request look like:
 
 ```bash
-curl --location 'localhost:8080/sanity_translate_document' \
+curl --location 'localhost:8001/sanity_translate_document' \
 --header 'Content-Type: application/json' \
 --data '{
     "FromLang": "it",
@@ -145,7 +145,7 @@ For example:
 Here how a working CURL request look like:
 
 ```bash
-curl --location 'localhost:8080/sanity_translate_field' \
+curl --location 'localhost:8001/sanity_translate_field' \
 --header 'Content-Type: application/json' \
 --data '{
       "FromLang": "en",
