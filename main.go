@@ -22,7 +22,11 @@ func main() {
 	gin.SetMode(gin.ReleaseMode)
 
 	router := gin.New()
-	router.Use(SetUpCORS())
+
+	corsConfig := SetCORSConfig()
+	if corsConfig != nil {
+		router.Use(corsConfig)
+	}
 
 	router.POST("/sanity_translate_document", SanityTranslateDocument)
 	router.POST("/sanity_translate_field", SanityTranslateField)
