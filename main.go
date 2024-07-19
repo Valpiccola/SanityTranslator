@@ -27,6 +27,8 @@ func main() {
 	router.POST("/sanity_translate_document", SanityTranslateDocument)
 	router.POST("/sanity_translate_field", SanityTranslateField)
 
+	router.GET("/health", FetchHealth)
+
 	fmt.Println("Starting Sanity Translation Service")
 	fmt.Println("")
 

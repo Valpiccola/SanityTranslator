@@ -185,6 +185,7 @@ func ExecuteTranslation(txx *SanityDocumentTranslator, val interface{}, path str
 
 // ManageTranslationMetadata updates the translation metadata document to keep reference in sync
 func ManageTranslationMetadata(txx *SanityDocumentTranslator) error {
+
 	query := fmt.Sprintf(`*[slug.current == '%s']{
 		"translation": *[
 			_type == "translation.metadata" &&
@@ -198,6 +199,9 @@ func ManageTranslationMetadata(txx *SanityDocumentTranslator) error {
 		return err
 	}
 
+	ids := gjson.Get(document, "result.#.translation.#._id").Array()
+	id := ids[0].Array()[0].String()
+
 	languages := gjson.Get(document, "result.#.translation.#.translations.#._key")
 
 	isEmpty := true
@@ -210,35 +214,33 @@ func ManageTranslationMetadata(txx *SanityDocumentTranslator) error {
 
 	if isEmpty {
 
-		// fmt.Println("Creating new translation.metadata document")
-
 		rawMutation := fmt.Sprintf(`
-			{
-				"mutations": [
-					{
-						"create": {
-							"_type": "translation.metadata",
-							"_id": "%s",
-							"translations": [
-								{
-									"_key": "%s",
-									"value": {
-										"_ref": "%s",
-										"_type": "reference"
-									}
-								},
-								{
-									"_key": "%s",
-									"value": {
-										"_ref": "%s",
-										"_type": "reference"
-									}
-								}
-							]
-						}
-					}
-				]
-			}`,
+ 		{
+ 			"mutations": [
+ 				{
+ 					"create": {
+ 						"_type": "translation.metadata",
+ 						"_id": "%s",
+ 						"translations": [
+ 							{
+ 								"_key": "%s",
+ 								"value": {
+ 									"_ref": "%s",
+ 									"_type": "reference"
+ 								}
+ 							},
+ 							{
+ 								"_key": "%s",
+ 								"value": {
+ 									"_ref": "%s",
+ 									"_type": "reference"
+ 								}
+ 							}
+ 						]
+ 					}
+ 				}
+ 			]
+ 		}`,
 			txx.Id+"_base",
 			txx.FromLang,
 			gjson.Get(txx.Before, "_id").String(),
@@ -255,31 +257,29 @@ func ManageTranslationMetadata(txx *SanityDocumentTranslator) error {
 
 	} else {
 
-		// fmt.Println("Updating existing translation.metadata document")
-
 		rawPatch := fmt.Sprintf(`
-			{
-				"mutations": [
-					{
-						"patch": {
-							"id": "%s",
-							"insert": {
-								"after": "translations[-1]",
-								"items": [
-									{
-										"_key": "%s",
-										"value": {
-											"_ref": "%s",
-											"_type": "reference"
-										}
-									}
-								]
-							}
-						}
-					}
-				]
-			}`,
-			txx.Id+"_base",
+ 		{
+ 			"mutations": [
+ 				{
+ 					"patch": {
+ 						"id": "%s",
+ 						"insert": {
+ 							"after": "translations[-1]",
+ 							"items": [
+ 								{
+ 									"_key": "%s",
+ 									"value": {
+ 										"_ref": "%s",
+ 										"_type": "reference"
+ 									}
+ 								}
+ 							]
+ 						}
+ 					}
+ 				}
+ 			]
+ 		}`,
+			id,
 			txx.ToLang,
 			gjson.Get(txx.After, "_id").String(),
 		)
