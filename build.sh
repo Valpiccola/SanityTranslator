@@ -1,5 +1,5 @@
 #!/bin/bash
 
-cd /root/BackendPartner
+cd /root/BackendTranslator
 . ./set_env_variables.sh
-./BackendPartner
+./SanityTranslator
