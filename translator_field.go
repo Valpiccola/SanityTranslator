@@ -21,6 +21,8 @@ func convertSanityPathToGJSONPath(sanityPath string) string {
 func SanityTranslateField(c *gin.Context) {
 	var txx SanityFieldTranslator
 
+	fmt.Println("Translating field")
+
 	// Create a Translator object adding all the info from the request
 	if err := c.BindJSON(&txx); err != nil {
 		c.String(http.StatusBadRequest, "Failed binding event to JSON")
