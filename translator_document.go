@@ -94,9 +94,13 @@ func SanityTranslateDocument(c *gin.Context) {
 
 	fmt.Printf("Translating to: %s\n\n", txx.ToSlug)
 
-	c.JSON(http.StatusOK, gin.H{
-		"message": "Document translated successfully",
-	})
+	c.JSON(
+		http.StatusOK,
+		gin.H{
+			"status":  "success",
+			"message": "Document translation completed",
+		},
+	)
 }
 
 // EvolveSanityResponse updates the response with new info necessary to Sanity

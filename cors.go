@@ -39,9 +39,17 @@ func SetCORSConfig() gin.HandlerFunc {
 		})
 	case "staging":
 		fmt.Println("CORS: Staging")
-		return cors.Default()
+		// Ensure 'Content-Type' is allowed in staging
+		return cors.New(cors.Config{
+			AllowAllOrigins: true,
+			AllowMethods:    []string{"POST", "OPTIONS", "GET"},
+			AllowHeaders: []string{
+				"Content-Type", // explicitly allowing JSON Content-Type
+			},
+		})
 	default:
 		fmt.Println("CORS: Development")
-		return nil
+		// Allow all origins and headers in development for simplicity
+		return cors.Default()
 	}
 }

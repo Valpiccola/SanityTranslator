@@ -1,23 +1,28 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
+	"regexp"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/tidwall/gjson"
 )
 
+// convertSanityPathToGJSONPath converts Sanity paths to gjson compatible paths
+func convertSanityPathToGJSONPath(sanityPath string) string {
+	// Convert array accessors from [index] to .index
+	re := regexp.MustCompile(`\[(\d+)\]`)
+	return re.ReplaceAllString(sanityPath, ".$1")
+}
+
 // SanityTranslateField handles the main logic for translating a specific field in Sanity documents.
 func SanityTranslateField(c *gin.Context) {
-
 	var txx SanityFieldTranslator
 
-	err := errors.New("")
-
 	// Create a Translator object adding all the info from the request
-	if err = c.BindJSON(&txx); err != nil {
+	if err := c.BindJSON(&txx); err != nil {
 		c.String(http.StatusBadRequest, "Failed binding event to JSON")
 		fmt.Println("Failed binding event to JSON")
 		return
@@ -36,10 +41,9 @@ func SanityTranslateField(c *gin.Context) {
 	txx.Before = result
 
 	for _, mappingField := range txx.MappingFields {
+		gjsonPath := convertSanityPathToGJSONPath(mappingField.SanityPath)
 
-		fmt.Printf("Translating field: %s\n", mappingField.JsonPath)
-
-		fieldValue := gjson.Get(txx.Before, mappingField.JsonPath).String()
+		fieldValue := gjson.Get(txx.Before, gjsonPath).String()
 		if fieldValue == "" {
 			c.String(http.StatusBadRequest, "Field not found in the document")
 			fmt.Println("Field not found in the document")
@@ -47,7 +51,6 @@ func SanityTranslateField(c *gin.Context) {
 		}
 
 		for _, toSlug := range txx.ToSlugs {
-
 			query = fmt.Sprintf(`*[slug.current == '%s'][0]`, toSlug)
 			translatedDoc, err := RunQuery(query)
 			if err != nil {
@@ -59,13 +62,14 @@ func SanityTranslateField(c *gin.Context) {
 			translatedDocID := gjson.Get(translatedDocResult, "_id").String()
 
 			translatedToLang := toSlug[1:3]
-
 			translatedValue, err := RunDeepl(fieldValue, txx.FromLang, translatedToLang)
 			if err != nil {
 				c.String(http.StatusBadRequest, "Failed executing translation")
 				fmt.Println("Failed executing translation")
 				return
 			}
+
+			translatedValue = strings.TrimSpace(translatedValue)
 
 			rawPatch := fmt.Sprintf(`
 			{
@@ -87,8 +91,9 @@ func SanityTranslateField(c *gin.Context) {
 
 			err = RunMutation(rawPatch)
 			if err != nil {
-				c.String(http.StatusBadRequest, "Failed patching translated field")
-				fmt.Println("Failed patching translated field")
+				errorMsg := fmt.Sprintf("Failed patching translated field: %v", err)
+				c.String(http.StatusBadRequest, errorMsg)
+				fmt.Println(errorMsg)
 				return
 			}
 
@@ -96,4 +101,12 @@ func SanityTranslateField(c *gin.Context) {
 		}
 		fmt.Println("")
 	}
+
+	c.JSON(
+		http.StatusOK,
+		gin.H{
+			"status":  "success",
+			"message": "Field translation completed",
+		},
+	)
 }
