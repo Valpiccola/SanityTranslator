@@ -123,19 +123,15 @@ For example:
   ],
   "MappingFields": [
     {
-      "JsonPath": "text.0.intro",
       "SanityPath": "text[0].intro"
     },
     {
-      "JsonPath": "text.1.intro",
       "SanityPath": "text[1].intro"
     },
     {
-      "JsonPath": "text.2.intro",
       "SanityPath": "text[2].intro"
     },
     {
-      "JsonPath": "text.3.intro",
       "SanityPath": "text[3].intro"
     }
   ]
@@ -157,19 +153,15 @@ curl --location 'localhost:8001/sanity_translate_field' \
       ],
       "MappingFields": [
         {
-          "JsonPath": "text.0.intro",
           "SanityPath": "text[0].intro"
         },
         {
-          "JsonPath": "text.1.intro",
           "SanityPath": "text[1].intro"
         },
         {
-          "JsonPath": "text.2.intro",
           "SanityPath": "text[2].intro"
         },
         {
-          "JsonPath": "text.3.intro",
           "SanityPath": "text[3].intro"
         }
       ]
