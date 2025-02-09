@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/tidwall/gjson"
@@ -164,6 +165,7 @@ func ExecuteTranslation(txx *SanityDocumentTranslator, val interface{}, path str
 				if fmt.Sprintf("%v", v) == "" {
 					continue
 				}
+				time.Sleep(1 * time.Second) // Deepl API rate limit
 				trax, err := RunDeepl(
 					fmt.Sprintf("%v", v),
 					txx.FromLang,
